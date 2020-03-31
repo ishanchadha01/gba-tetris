@@ -1,7 +1,7 @@
 #ifndef GAME_H
 #define GAME_H
 #define BLOCKLENGTH 8
-#define BACKGROUND GRAY
+#define BACKGROUND BLACK
 
 #include "gba.h"
 

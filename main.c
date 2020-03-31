@@ -22,30 +22,30 @@ int main(void) {
     waitForVBlank();
     switch (state) {
       case START:
-        if (KEY_DOWN(BUTTON_START, BUTTONS)) state = PLAY;
+        reset();
+        if (KEY_JUST_PRESSED(BUTTON_START, currentButtons, previousButtons)) start();
         break;
       case PLAY:
-        if (KEY_DOWN(BUTTON_SELECT, BUTTONS)) state = START;
-        else if (KEY_DOWN(BUTTON_LEFT, BUTTONS)) movePiece(-1, 0);
-        else if (KEY_DOWN(BUTTON_DOWN, BUTTONS)) movePiece(1, 0);
-        else if (KEY_DOWN(BUTTON_DOWN, BUTTONS)) movePiece(0, 1);
-        else if (KEY_DOWN(BUTTON_L, BUTTONS)) rotatePiece(1);
-        else if (KEY_DOWN(BUTTON_R, BUTTONS)) rotatePiece(0);
+        if (KEY_JUST_PRESSED(BUTTON_SELECT, currentButtons, previousButtons)) state = START;
+        else if (KEY_JUST_PRESSED(BUTTON_LEFT, currentButtons, previousButtons)) movePiece(-1, 0);
+        else if (KEY_JUST_PRESSED(BUTTON_DOWN, currentButtons, previousButtons)) movePiece(1, 0);
+        else if (KEY_JUST_PRESSED(BUTTON_DOWN, currentButtons, previousButtons)) movePiece(0, 1);
+        else if (KEY_JUST_PRESSED(BUTTON_L, currentButtons, previousButtons)) rotatePiece(1);
+        else if (KEY_JUST_PRESSED(BUTTON_R, currentButtons, previousButtons)) rotatePiece(0);
+        movePiece(0, 1);
         break;
       case WIN:
-        if (KEY_DOWN(BUTTON_SELECT, BUTTONS)) state = START;
-        else if (KEY_DOWN(BUTTON_START, BUTTONS)) state = START;
+        if (KEY_DOWN(BUTTON_SELECT, currentButtons)) state = START;
+        else if (KEY_DOWN(BUTTON_START, currentButtons)) state = START;
         break;
       case LOSE:
-        if (KEY_DOWN(BUTTON_SELECT, BUTTONS)) state = START;
-        else if (KEY_DOWN(BUTTON_START, BUTTONS)) state = START;
+        if (KEY_DOWN(BUTTON_SELECT, currentButtons)) state = START;
+        else if (KEY_DOWN(BUTTON_START, currentButtons)) state = START;
         break;
+      reload();
     }
-
     previousButtons = currentButtons;  // Store the current state of the buttons
   }
-
-  UNUSED(previousButtons);  // You can remove this once previousButtons is used
 
   return 0;
 }

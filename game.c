@@ -61,7 +61,6 @@ void start(void) {
     srand(frame);
     drawRectDMA(0, 0, 240, 160, BACKGROUND);
     drawRectDMA(0, 40, BLOCKLENGTH * 10, BLOCKLENGTH * 20, GRAY);
-	drawImageDMA(0, 0, 240, 160, startImage);
 
 	// initial score text
 	sprintf(scoreStr, "Score: %d", 0);
@@ -70,10 +69,11 @@ void start(void) {
 	// initial level (calculated from the speed) text
 	sprintf(levelStr, "Level: %d", 1);
 	drawString(120, 150, levelStr, WHITE);
-	currPiece = generatePiece();
-	drawPiece();
+    
 	nextPiece = generatePiece();
 	drawNext();
+	currPiece = generatePiece();
+	drawPiece();
     frame = 0;
 }
 
