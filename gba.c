@@ -32,7 +32,7 @@ void drawRectDMA(int row, int col, int width, int height, volatile u16 color) {
 void drawFullScreenImageDMA(const u16 *image) {
   DMA[3].src = image;
   DMA[3].dst = videoBuffer;
-  DMA[3].cnt = (240*160) | DMA_SOURCE_FIXED | DMA_ON;
+  DMA[3].cnt = (240*160) | DMA_ON | DMA_SOURCE_FIXED;
 }
 
 void drawImageDMA(int row, int col, int width, int height, const u16 *image) {
@@ -44,8 +44,9 @@ void drawImageDMA(int row, int col, int width, int height, const u16 *image) {
 }
 
 void fillScreenDMA(volatile u16 color) {
-  // TODO: IMPLEMENT
-  UNUSED(color);
+  DMA[3].src = &color;
+  DMA[3].dst = videoBuffer;
+  DMA[3].cnt = 38400 | DMA_ON | DMA_SOURCE_FIXED;
 }
 
 void drawChar(int row, int col, char ch, u16 color) {

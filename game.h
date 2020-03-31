@@ -27,23 +27,22 @@
         } Tetromino;
 
         // Game actions
-        void reload();
-        void reset();
-        void start();
-        void end();
+        void reload(void);
+        void reset(void);
+        void start(void);
+        void end(void);
 
         // Piece actions
-        Tetromino generatePiece();
-        void drawPiece();
+        Tetromino generatePiece(void);
+        void drawPiece(void);
         void rotatePiece(int direction);
-        void drawNext();
+        void drawNext(void);
         void movePiece(int x, int y);
         void setPiece(Tetromino *piece, int type, int rotation);
         int collision(Tetromino collided);
-        void erasePiece();
+        void erasePiece(void);
 
         // External vars
-        extern int state;
         extern Tetromino currPiece;
         extern Tetromino nextPiece;
         extern const int PIECES[7][4][4][2];
