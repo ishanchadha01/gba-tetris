@@ -27,11 +27,12 @@ int main(void) {
         break;
       case PLAY:
         if (KEY_JUST_PRESSED(BUTTON_SELECT, currentButtons, previousButtons)) state = START;
-        else if (KEY_JUST_PRESSED(BUTTON_LEFT, currentButtons, previousButtons)) movePiece(-1, 0);
+        else if (KEY_DOWN(BUTTON_LEFT, currentButtons)) movePiece(-1, 0);
         else if (KEY_JUST_PRESSED(BUTTON_DOWN, currentButtons, previousButtons)) movePiece(1, 0);
         else if (KEY_JUST_PRESSED(BUTTON_DOWN, currentButtons, previousButtons)) movePiece(0, 1);
         else if (KEY_JUST_PRESSED(BUTTON_L, currentButtons, previousButtons)) rotatePiece(1);
         else if (KEY_JUST_PRESSED(BUTTON_R, currentButtons, previousButtons)) rotatePiece(0);
+        delay(frameSpeed);
         movePiece(0, 1);
         break;
       case WIN:

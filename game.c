@@ -19,7 +19,14 @@ static char scoreStr[10];
 static int score;
 static int frame;
 static int linesCleared;
-static int frameSpeed;
+int frameSpeed;
+
+void delay(int n) {
+    volatile int x = 0;
+    for (int i = 0; i < n * 8000; i++) {
+        x++;
+    }
+}
 
 void reload(void) {
     switch(state) {
@@ -48,19 +55,19 @@ void reset(void) {
     score = 0;
     frame = 0;
     linesCleared = 0;
-    frameSpeed = 40;
+    frameSpeed = 30;
     int src = 0;
 	DMA[3].src = &src;
 	DMA[3].dst = &grid[0];
 	DMA[3].cnt = 16 | DMA_ON | DMA_SOURCE_FIXED;
-	drawImageDMA(0, 0, 240, 160, startImage);
+	drawFullScreenImageDMA(startImage);
 }
 
 void start(void) {
     state = PLAY;
     srand(frame);
-    drawRectDMA(0, 0, 240, 160, BACKGROUND);
-    drawRectDMA(0, 40, BLOCKLENGTH * 10, BLOCKLENGTH * 20, GRAY);
+    fillScreenDMA(BACKGROUND);
+    drawRectDMA(0, 60, BLOCKLENGTH * 10, BLOCKLENGTH * 20, GRAY);
 
 	// initial score text
 	sprintf(scoreStr, "Score: %d", 0);
@@ -80,10 +87,10 @@ void start(void) {
 void end(void) {
     if (score >= 1000) {
         state = WIN;
-        drawImageDMA(0, 0, 240, 160, winner);
+        drawFullScreenImageDMA(winner);
     } else {
         state = LOSE;
-        drawImageDMA(0, 0, 240, 160, loser);
+        drawFullScreenImageDMA(loser);
     }
 }
     
@@ -99,7 +106,7 @@ void drawPiece(void) {
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
             if (currPiece.space[i][j] == 1) {
-                drawRectDMA(BLOCKLENGTH * (currPiece.y + i), 40 + BLOCKLENGTH * (currPiece.x + j), BLOCKLENGTH, BLOCKLENGTH, currPiece.color);
+                drawRectDMA(BLOCKLENGTH * (currPiece.y + i), 60 + BLOCKLENGTH * (currPiece.x + j), BLOCKLENGTH, BLOCKLENGTH, currPiece.color);
             }
         }
     }
@@ -130,9 +137,9 @@ void drawNext(void) {
             if (nextPiece.space[i][j] == 1) {
                 color = nextPiece.color;
             } else {
-                color = BACKGROUND;
+                color = GRAY;
             }
-            drawRectDMA(BLOCKLENGTH * (nextPiece.y + i), BLOCKLENGTH * (nextPiece.x + j), BLOCKLENGTH, BLOCKLENGTH, color);
+            drawRectDMA(BLOCKLENGTH * (nextPiece.y + i), 20 + BLOCKLENGTH * (nextPiece.x + j), BLOCKLENGTH, BLOCKLENGTH, color);
         }
     }
 }
@@ -145,7 +152,7 @@ void movePiece(int dx, int dy) {
         erasePiece();
         currPiece = movedPiece;
         drawPiece();
-    } else if (collision(movedPiece) && dy == 1) {
+    } else if (collision(movedPiece) == 1 && dy == 1) {
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 if (currPiece.space[i][j] == 1) grid[currPiece.y + i][currPiece.x + j] = currPiece.color;
@@ -179,9 +186,9 @@ void movePiece(int dx, int dy) {
                             }
                             if (moveDown != grid[a][k]) {
                                 if (grid[a][k] == 0) {
-                                    drawRectDMA(BLOCKLENGTH * a, 40 + BLOCKLENGTH * k, BLOCKLENGTH, BLOCKLENGTH, BACKGROUND);
+                                    drawRectDMA(BLOCKLENGTH * a, 60 + BLOCKLENGTH * k, BLOCKLENGTH, BLOCKLENGTH, BACKGROUND);
                                 } else {
-                                    drawRectDMA(BLOCKLENGTH * a, 40 + BLOCKLENGTH * k, BLOCKLENGTH, BLOCKLENGTH, GRAY);
+                                    drawRectDMA(BLOCKLENGTH * a, 60 + BLOCKLENGTH * k, BLOCKLENGTH, BLOCKLENGTH, GRAY);
                                 }
                             }
                         }
@@ -210,7 +217,7 @@ void movePiece(int dx, int dy) {
 void setPiece(Tetromino *piece, int type, int rotation) {
     DMA[3].src = 0;
 	DMA[3].dst = &piece->space[0][0];
-	DMA[3].cnt = 16 | DMA_ON | DMA_SOURCE_FIXED;
+	DMA[3].cnt = 16 | DMA_ON | DMA_SOURCE_FIXED | DMA_16;
 	piece->rotation = rotation;
 	for (int i = 0; i < 4; i++) {
         int x = PIECES[type][rotation][i][0];
@@ -248,8 +255,8 @@ int collision(Tetromino aPiece) {
         for (int j = 0; j < 4; j++) {
             if (aPiece.space[i][j] != 0) {
                 if ((grid[aPiece.y + i][aPiece.x + j] != 0)
-                    || (aPiece.x < 0) || (aPiece.x + j >= 10)
-                    || (aPiece.y + i >= 20)) return 1;
+                    || (aPiece.x < 0) || (aPiece.x + j >= 160)
+                    || (aPiece.y + i >= 240)) return 1;
             }
         }
     }
@@ -260,7 +267,7 @@ void erasePiece(void) {
     for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			if (currPiece.space[i][j] != 0) {
-				drawRectDMA(BLOCKLENGTH * (currPiece.y + i), 40 + BLOCKLENGTH * (j + currPiece.x), BLOCKLENGTH, BLOCKLENGTH, GRAY);
+				drawRectDMA(BLOCKLENGTH * (currPiece.y + i), 60 + BLOCKLENGTH * (j + currPiece.x), BLOCKLENGTH, BLOCKLENGTH, GRAY);
 			}
 		}
 	}

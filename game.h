@@ -27,6 +27,7 @@
         } Tetromino;
 
         // Game actions
+        void delay(int sec);
         void reload(void);
         void reset(void);
         void start(void);
@@ -47,5 +48,9 @@
         extern Tetromino nextPiece;
         extern const int PIECES[7][4][4][2];
         extern u16 grid[20][10];
+        extern const unsigned short loser[38400];
+        extern const unsigned short winner[38400];
+        extern const unsigned short startImage[1850];
+        extern int frameSpeed;
 
 #endif
