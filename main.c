@@ -42,8 +42,8 @@ int main(void) {
         else if (KEY_DOWN(BUTTON_START, currentButtons)) state = START;
         break;
       case LOSE:
-        if (KEY_DOWN(BUTTON_SELECT, currentButtons)) state = START;
-        else if (KEY_DOWN(BUTTON_START, currentButtons)) state = START;
+        if (KEY_JUST_PRESSED(BUTTON_SELECT, currentButtons, previousButtons)) state = START;
+        else if (KEY_JUST_PRESSED(BUTTON_START, currentButtons, previousButtons)) state = START;
         break;
     }
     previousButtons = currentButtons;  // Store the current state of the buttons

@@ -15,5 +15,6 @@ Every 100 points gained, the game speeds up by a certain factor.
 If the blocks pile up past the top of your screen, then the game ends.
 If you have a score of greater than 1000, then the winner screen is displayed.
 If you have a score of less than 1000, then the loser screen is displayed.
+You can press START to restart the game.
 
 You can press SELECT at any point to restart the game.

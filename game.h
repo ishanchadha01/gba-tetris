@@ -39,6 +39,8 @@
         void rotatePiece(int direction);
         void drawNext(void);
         void movePiece(int x, int y);
+        void clearLines(int i);
+        void updateLevel(int fullRows);
         void setPiece(Tetromino *piece, int type, int rotation);
         int collision(Tetromino collided);
         void erasePiece(void);
