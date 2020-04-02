@@ -1,7 +1,7 @@
 /*
  * Exported with nin10kit v1.7
  * Invocation command was nin10kit --mode=3 --resize=240x160 winner winner.png 
- * Time-stamp: Tuesday 03/31/2020, 02:46:39
+ * Time-stamp: Wednesday 04/01/2020, 22:40:43
  * 
  * Image Information
  * -----------------

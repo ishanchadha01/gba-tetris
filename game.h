@@ -50,7 +50,7 @@
         extern u16 grid[20][10];
         extern const unsigned short loser[38400];
         extern const unsigned short winner[38400];
-        extern const unsigned short startImage[1850];
+        extern const unsigned short startImage[38400];
         extern int frameSpeed;
 
 #endif

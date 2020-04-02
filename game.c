@@ -17,45 +17,16 @@ static char levelStr[10];
 static int level;
 static char scoreStr[10];
 static int score;
-static int frame;
 static int linesCleared;
-int frameSpeed;
-
-void delay(int n) {
-    volatile int x = 0;
-    for (int i = 0; i < n * 8000; i++) {
-        x++;
-    }
-}
-
-void reload(void) {
-    switch(state) {
-        case START:
-            frame++;
-            break;
-        case PLAY:
-            if (frame != frameSpeed) {
-                frame++;
-            } else {
-                movePiece(0, 1);
-            }
-            break;
-        case WIN:
-            frame++;
-            break;
-        case LOSE:
-            frame++;
-            break;
-    }
-}
+int speed;
+int levelScore = 100;
 
 void reset(void) {
     state = START;
     level = 1;
     score = 0;
-    frame = 0;
     linesCleared = 0;
-    frameSpeed = 30;
+    speed = 37;
     int src = 0;
 	DMA[3].src = &src;
 	DMA[3].dst = &grid[0];
@@ -65,7 +36,7 @@ void reset(void) {
 
 void start(void) {
     state = PLAY;
-    srand(frame);
+    srand(0);
     fillScreenDMA(BACKGROUND);
     drawRectDMA(0, 60, BLOCKLENGTH * 10, BLOCKLENGTH * 20, GRAY);
 
@@ -81,7 +52,6 @@ void start(void) {
 	drawNext();
 	currPiece = generatePiece();
 	drawPiece();
-    frame = 0;
 }
 
 void end(void) {
@@ -97,7 +67,7 @@ void end(void) {
 Tetromino generatePiece(void) {
     Tetromino piece;
     setPiece(&piece, rand() % 7, 0);
-    piece.x = 8;
+    piece.x = 4;
 	piece.y = 0;
 	return piece;
 }
@@ -114,6 +84,8 @@ void drawPiece(void) {
 
 void rotatePiece(int direction) {
     Tetromino rotatedPiece;
+    rotatedPiece.x = currPiece.x;
+    rotatedPiece.y = currPiece.y;
     if (direction == 1){
         setPiece(&rotatedPiece, currPiece.type, (currPiece.rotation + 1) % 4);
     } else {
@@ -139,7 +111,7 @@ void drawNext(void) {
             } else {
                 color = GRAY;
             }
-            drawRectDMA(BLOCKLENGTH * (nextPiece.y + i), 20 + BLOCKLENGTH * (nextPiece.x + j), BLOCKLENGTH, BLOCKLENGTH, color);
+            drawRectDMA(BLOCKLENGTH * (nextPiece.y + i), BLOCKLENGTH * (nextPiece.x + j), BLOCKLENGTH, BLOCKLENGTH, color);
         }
     }
 }
@@ -158,16 +130,17 @@ void movePiece(int dx, int dy) {
                 if (currPiece.space[i][j] == 1) grid[currPiece.y + i][currPiece.x + j] = currPiece.color;
             }
         }
+        int init = currPiece.y;
+        int exit = init + 4;
         currPiece = nextPiece;
         u16 moveDown;
         if (collision(currPiece) == 0) {
             drawPiece();
             nextPiece = generatePiece();
             drawNext();
-            frame = 0;
             int fullRows = 0;
             int fullFlag = 1;
-            for (int i = 0; i < 4; i++) {
+            for (int i = init; i < exit; i++) {
                 fullFlag = 1;
                 for (int j = 0; j < 10; j++) {
                     if (grid[i][j] == 0) {
@@ -182,11 +155,11 @@ void movePiece(int dx, int dy) {
                             if (a == 0) {
                                 grid[a][k] = 0;
                             } else {
-                                grid [a][k] = grid[a - 1][k];
+                                grid[a][k] = grid[a - 1][k];
                             }
                             if (moveDown != grid[a][k]) {
-                                if (grid[a][k] == 0) {
-                                    drawRectDMA(BLOCKLENGTH * a, 60 + BLOCKLENGTH * k, BLOCKLENGTH, BLOCKLENGTH, BACKGROUND);
+                                if (grid[a][k] != 0) {
+                                    drawRectDMA(BLOCKLENGTH * a, 60 + BLOCKLENGTH * k, BLOCKLENGTH, BLOCKLENGTH, grid[a][k]);
                                 } else {
                                     drawRectDMA(BLOCKLENGTH * a, 60 + BLOCKLENGTH * k, BLOCKLENGTH, BLOCKLENGTH, GRAY);
                                 }
@@ -197,17 +170,19 @@ void movePiece(int dx, int dy) {
                 }
             }
             if (fullRows > 0) {
-                if (frameSpeed > 1) frameSpeed--;
-				drawRectDMA(120, 150, 140, 8, GRAY);
-				sprintf(levelStr, "Level: %d", 41 - frameSpeed);
+                drawRectDMA(100, 150, 140, BLOCKLENGTH, BACKGROUND);
+                score += (fullRows + 1) * (38 - speed) * 10;
+                if (score >= levelScore + 100) {
+                    level++;
+                    if (speed > 1) speed--;
+                    levelScore += 100;
+                }
+			    sprintf(scoreStr, "Score: %d", score);
+			    drawString(100, 150, scoreStr, WHITE);
+				drawRectDMA(120, 150, 140, BLOCKLENGTH, BACKGROUND);
+				sprintf(levelStr, "Level: %d", level);
 				drawString(120, 150, levelStr, WHITE);
 			}
-
-			// add to the score and redraw it
-			score += (fullRows + 1) * (41 - frameSpeed);
-			drawRectDMA(100, 150, 140, 8, GRAY);
-			sprintf(scoreStr, "Score: %d", score);
-			drawString(100, 150, scoreStr, WHITE);
         } else {
             end();
         }
@@ -217,7 +192,7 @@ void movePiece(int dx, int dy) {
 void setPiece(Tetromino *piece, int type, int rotation) {
     DMA[3].src = 0;
 	DMA[3].dst = &piece->space[0][0];
-	DMA[3].cnt = 16 | DMA_ON | DMA_SOURCE_FIXED | DMA_16;
+	DMA[3].cnt = 16 | DMA_ON | DMA_SOURCE_FIXED | DMA_32;
 	piece->rotation = rotation;
 	for (int i = 0; i < 4; i++) {
         int x = PIECES[type][rotation][i][0];
@@ -254,9 +229,9 @@ int collision(Tetromino aPiece) {
     for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
             if (aPiece.space[i][j] != 0) {
-                if ((grid[aPiece.y + i][aPiece.x + j] != 0)
-                    || (aPiece.x < 0) || (aPiece.x + j >= 160)
-                    || (aPiece.y + i >= 240)) return 1;
+                if ((grid[aPiece.y + i][aPiece.x + j] != 0) || (aPiece.x + j < 0) || (aPiece.x + j >= 10) || (aPiece.y + i >= 20)) {
+					return 1;
+                }
             }
         }
     }

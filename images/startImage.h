@@ -1,11 +1,11 @@
 /*
  * Exported with nin10kit v1.7
- * Invocation command was nin10kit --mode=3 --resize=50x37 startImage startImage.png 
- * Time-stamp: Tuesday 03/31/2020, 05:00:08
+ * Invocation command was nin10kit --mode=3 --resize=240x160 startImage startImage.png 
+ * Time-stamp: Wednesday 04/01/2020, 22:40:24
  * 
  * Image Information
  * -----------------
- * startImage.png 50@37
+ * startImage.png 240@160
  * 
  * All bug reports / feature requests are to be filed here https://github.com/TricksterGuy/nin10kit/issues
  */
@@ -13,11 +13,11 @@
 #ifndef STARTIMAGE_H
 #define STARTIMAGE_H
 
-extern const unsigned short startImage[1850];
-#define STARTIMAGE_SIZE 3700
-#define STARTIMAGE_LENGTH 1850
-#define STARTIMAGE_WIDTH 50
-#define STARTIMAGE_HEIGHT 37
+extern const unsigned short startImage[38400];
+#define STARTIMAGE_SIZE 76800
+#define STARTIMAGE_LENGTH 38400
+#define STARTIMAGE_WIDTH 240
+#define STARTIMAGE_HEIGHT 160
 
 #endif
 

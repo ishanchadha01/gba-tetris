@@ -9,6 +9,7 @@ int main(void) {
   REG_DISPCNT = MODE3 | BG2_ENABLE;
 
   extern GBAState state;
+  extern int speed;
 
   // Save current and previous state of button input.
   u32 previousButtons = BUTTONS;
@@ -27,13 +28,14 @@ int main(void) {
         break;
       case PLAY:
         if (KEY_JUST_PRESSED(BUTTON_SELECT, currentButtons, previousButtons)) state = START;
-        else if (KEY_DOWN(BUTTON_LEFT, currentButtons)) movePiece(-1, 0);
-        else if (KEY_JUST_PRESSED(BUTTON_DOWN, currentButtons, previousButtons)) movePiece(1, 0);
-        else if (KEY_JUST_PRESSED(BUTTON_DOWN, currentButtons, previousButtons)) movePiece(0, 1);
-        else if (KEY_JUST_PRESSED(BUTTON_L, currentButtons, previousButtons)) rotatePiece(1);
-        else if (KEY_JUST_PRESSED(BUTTON_R, currentButtons, previousButtons)) rotatePiece(0);
-        delay(frameSpeed);
-        movePiece(0, 1);
+        if (KEY_JUST_PRESSED(BUTTON_LEFT, currentButtons, previousButtons)) movePiece(-1, 0);
+        if (KEY_JUST_PRESSED(BUTTON_RIGHT, currentButtons, previousButtons)) movePiece(1, 0);
+        if (KEY_JUST_PRESSED(BUTTON_DOWN, currentButtons, previousButtons)) movePiece(0, 1);
+        if (KEY_JUST_PRESSED(BUTTON_L, currentButtons, previousButtons)) rotatePiece(1);
+        if (KEY_JUST_PRESSED(BUTTON_R, currentButtons, previousButtons)) rotatePiece(0);
+        if (vBlankCounter % (speed) == 0) {
+          movePiece(0, 1);
+        }
         break;
       case WIN:
         if (KEY_DOWN(BUTTON_SELECT, currentButtons)) state = START;
@@ -43,7 +45,6 @@ int main(void) {
         if (KEY_DOWN(BUTTON_SELECT, currentButtons)) state = START;
         else if (KEY_DOWN(BUTTON_START, currentButtons)) state = START;
         break;
-      reload();
     }
     previousButtons = currentButtons;  // Store the current state of the buttons
   }

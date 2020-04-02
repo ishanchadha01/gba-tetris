@@ -32,7 +32,7 @@ void drawRectDMA(int row, int col, int width, int height, volatile u16 color) {
 void drawFullScreenImageDMA(const u16 *image) {
   DMA[3].src = image;
   DMA[3].dst = videoBuffer;
-  DMA[3].cnt = (240*160) | DMA_ON | DMA_SOURCE_FIXED;
+  DMA[3].cnt = (240*160) | DMA_ON | DMA_SOURCE_INCREMENT | DMA_DESTINATION_INCREMENT;
 }
 
 void drawImageDMA(int row, int col, int width, int height, const u16 *image) {
