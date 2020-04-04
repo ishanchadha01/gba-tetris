@@ -31,6 +31,7 @@ int main(void) {
         if (KEY_JUST_PRESSED(BUTTON_LEFT, currentButtons, previousButtons)) movePiece(-1, 0);
         if (KEY_JUST_PRESSED(BUTTON_RIGHT, currentButtons, previousButtons)) movePiece(1, 0);
         if (KEY_JUST_PRESSED(BUTTON_DOWN, currentButtons, previousButtons)) movePiece(0, 1);
+        if (KEY_JUST_PRESSED(BUTTON_UP, currentButtons, previousButtons)) hardDrop();
         if (KEY_JUST_PRESSED(BUTTON_L, currentButtons, previousButtons)) rotatePiece(1);
         if (KEY_JUST_PRESSED(BUTTON_R, currentButtons, previousButtons)) rotatePiece(0);
         if (vBlankCounter % (speed) == 0) {

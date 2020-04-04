@@ -44,6 +44,7 @@
         void setPiece(Tetromino *piece, int type, int rotation);
         int collision(Tetromino collided);
         void erasePiece(void);
+        void hardDrop(void);
 
         // External vars
         extern Tetromino currPiece;

@@ -39,7 +39,7 @@ void drawImageDMA(int row, int col, int width, int height, const u16 *image) {
   for (int r = 0; r < height; r++) {
     DMA[3].src = image;
     DMA[3].dst = &videoBuffer[OFFSET(row + r, col, 240)];
-    DMA[3].cnt = width | DMA_ON | DMA_SOURCE_FIXED;
+    DMA[3].cnt = width | DMA_ON;
   }
 }
 

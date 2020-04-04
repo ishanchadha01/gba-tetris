@@ -310,3 +310,22 @@ void erasePiece(void) {
 		}
 	}
 }
+
+// hard drop tetris piece
+void hardDrop(void) {
+    int nextFlag = 0;
+
+    // checks if space below is open and then drops
+    while (nextFlag == 0) {
+        movePiece(0, 1);
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (currPiece.space[i][j] != 0) {
+                    if ((grid[currPiece.y + i + 1][currPiece.x + j] != 0) || (currPiece.y + i + 1 >= 20)) {
+                        nextFlag = 1;
+                    }
+                }
+            }
+        }
+    }
+}
