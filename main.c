@@ -10,6 +10,7 @@ int main(void) {
 
   extern GBAState state;
   extern int speed;
+  extern int pieceFlag;
 
   // Save current and previous state of button input.
   u32 previousButtons = BUTTONS;
@@ -34,6 +35,7 @@ int main(void) {
         if (KEY_JUST_PRESSED(BUTTON_UP, currentButtons, previousButtons)) hardDrop();
         if (KEY_JUST_PRESSED(BUTTON_L, currentButtons, previousButtons)) rotatePiece(1);
         if (KEY_JUST_PRESSED(BUTTON_R, currentButtons, previousButtons)) rotatePiece(0);
+        if (KEY_JUST_PRESSED(BUTTON_A, currentButtons, previousButtons)) storePiece(pieceFlag);
         if (vBlankCounter % (speed) == 0) {
           movePiece(0, 1);
         }

@@ -21,6 +21,9 @@ static int score;
 static int linesCleared;
 int speed;
 int levelScore = 100;
+int pieceFlag = 0;
+Tetromino storedPiece;
+int storeIsEmpty = 1;
 
 
 // reset state to beginning
@@ -67,6 +70,9 @@ void start(void) {
     // draw upcoming piece in top left
 	currPiece = generatePiece();
 	drawPiece();
+
+    // draw storage box
+    drawStore();
 }
 
 // end of game
@@ -164,6 +170,8 @@ void movePiece(int dx, int dy) {
 
     // if there is a collision caused by the block moving down
     } else if (collision(movedPiece) == 1 && dy == 1) {
+        // update piece flag
+        pieceFlag = 0;
 
         // update grid
         for (int i = 0; i < 4; i++) {
@@ -326,6 +334,44 @@ void hardDrop(void) {
                     }
                 }
             }
+        }
+    }
+}
+
+// store piece for later use
+void storePiece(int storeFlag) {
+    if (storeFlag == 0) {
+        Tetromino tempStore = storedPiece;
+        storedPiece = currPiece;
+
+        // stores current piece in storage
+        u16 color;
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (currPiece.space[i][j] == 1) {
+                    color = currPiece.color;
+                } else {
+                    color = GRAY;
+                }
+                drawRectDMA(BLOCKLENGTH * i, 120 + BLOCKLENGTH * (4 + j), BLOCKLENGTH, BLOCKLENGTH, color);
+            }
+        }
+        erasePiece();
+        if (storeIsEmpty == 1) currPiece = nextPiece;
+        else currPiece = tempStore;
+        drawPiece();
+        nextPiece = generatePiece();
+        drawNext();
+        pieceFlag = 1;
+        storeIsEmpty = 0;
+    }
+}
+
+// draws storage box
+void drawStore(void) {
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            drawRectDMA(BLOCKLENGTH * (currPiece.y + i), 120 + BLOCKLENGTH * (currPiece.x + j), BLOCKLENGTH, BLOCKLENGTH, GRAY);
         }
     }
 }

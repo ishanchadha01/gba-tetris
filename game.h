@@ -45,6 +45,8 @@
         int collision(Tetromino collided);
         void erasePiece(void);
         void hardDrop(void);
+        void storePiece(int storeFlag);
+        void drawStore(void);
 
         // External vars
         extern Tetromino currPiece;
